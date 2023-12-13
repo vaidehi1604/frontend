@@ -1,7 +1,52 @@
+"use client";
 import Link from "next/link";
-import React from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const page = () => {
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const router = useRouter(); // Import the useRouter hook
+  const { otp } = router.query || {};
+  console.log(otp);
+  const reset = async (e) => {
+    e.preventDefault();
+
+    const data = {
+      otp,
+      oldPassword,
+      newPassword,
+    };
+    useEffect(() => {
+      console.log("OTP:", otp);
+    }, [otp]);
+    try {
+      let result = await fetch("http://localhost:3003/admin/reset", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (result.ok) {
+        const response = await result.json();
+        alert("Password reset successful!!");
+        console.log(response);
+
+        // Redirect to another page after successful password reset
+        router.push("/admin");
+      } else {
+        console.error(
+          "Failed to reset password:",
+          result.status,
+          result.statusText
+        );
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
   return (
     <div>
       <form
@@ -12,8 +57,8 @@ const page = () => {
             <div className="bg-white px-6 py-5 rounded shadow-md text-black w-full">
               <h1 className="mb-8 text-3xl text-center">Reset Your Password</h1>
               <input
-                //   onChange={(e) => setUsername(e.target.value)}
-                //   value={username}
+                onChange={(e) => setOldPassword(e.target.value)}
+                value={oldPassword}
                 type="password"
                 className="block border border-grey-light w-full p-3 rounded mb-4"
                 name="Old Password"
@@ -22,8 +67,8 @@ const page = () => {
               />
 
               <input
-                //   onChange={(e) => setEmail(e.target.value)}
-                //   value={email}
+                onChange={(e) => setNewPassword(e.target.value)}
+                value={newPassword}
                 type="password"
                 className="block border border-grey-light w-full p-3 rounded mb-4"
                 name="New Password"
@@ -32,7 +77,7 @@ const page = () => {
               />
 
               <button
-                //   onClick={createUser}
+                onClick={reset}
                 type="submit"
                 className="w-full text-center py-3 rounded bg-cyan-700 text-white hover:bg-green-dark focus:outline-none my-1"
               >

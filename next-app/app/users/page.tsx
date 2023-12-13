@@ -1,9 +1,9 @@
-import React from 'react'
+//server component for useState and useEffect
+"use client";
+import React from "react";
 
 const page = () => {
-  return (
-    <div>USER</div>
-  )
-}
+  return <div>USER</div>;
+};
 
-export default page
+export default page;

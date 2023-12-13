@@ -2,15 +2,29 @@
 "use client";
 import Link from "next/link";
 import { MouseEvent, useState } from "react";
+// import { useForm } from "react-hook-form";
+
+// import * as yup from "yup";
+
+// const schema = yup.object({
+//   email: yup.string().required(),
+//   password: yup.string().min(6).required(),
+// });
 
 const page = () => {
+  // const { handleSubmit, register,formState:{err} } = useForm({
+  //   // resolver: yupResolver(schema),
+  // });
+
+  // const formSubmit = (data) => {
+  //   console.log(data, "data");
+  // };
   //define state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-
-  const login = async (e:any) => {
-    e.preventDefault(); 
+  const login = async (e) => {
+    e.preventDefault();
     const data = {
       email,
       password,
@@ -42,7 +56,7 @@ const page = () => {
   return (
     <div>
       <form
-      // onSubmit={createValidaton}
+      // onSubmit={handleSubmit(formSubmit)}
       >
         <div className="bg-grey-lighter min-h-screen flex flex-col">
           <div className="container max-w-sm mx-auto flex-1 flex flex-col items-center justify-center px-2">
@@ -57,6 +71,7 @@ const page = () => {
                 name="email"
                 id="email"
                 placeholder="Email"
+                // register={{ ...register("email") }}
               />
 
               <input
@@ -67,6 +82,7 @@ const page = () => {
                 className="block border border-grey-light w-full p-3 rounded mb-4"
                 name="password"
                 placeholder="Password"
+                // register={{ ...register("password") }}
               />
 
               <button
@@ -79,7 +95,7 @@ const page = () => {
             </div>
 
             <div className="text-grey-dark mt-6">
-              <Link className="text-cyan-700" href="/admin/otp">
+              <Link className="text-cyan-700" href="/admin/forgot">
                 Forgot password!!
               </Link>
             </div>
