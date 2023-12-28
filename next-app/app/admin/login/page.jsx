@@ -2,23 +2,9 @@
 "use client";
 import Link from "next/link";
 import { MouseEvent, useState } from "react";
-// import { useForm } from "react-hook-form";
-
-// import * as yup from "yup";
-
-// const schema = yup.object({
-//   email: yup.string().required(),
-//   password: yup.string().min(6).required(),
-// });
+import commonApi from "../";
 
 const page = () => {
-  // const { handleSubmit, register,formState:{err} } = useForm({
-  //   // resolver: yupResolver(schema),
-  // });
-
-  // const formSubmit = (data) => {
-  //   console.log(data, "data");
-  // };
   //define state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,27 +17,40 @@ const page = () => {
     };
 
     try {
-      let result = await fetch("http://localhost:3003/admin/login", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json", // Set the content type
-        },
+      const registrationResponse = await commonApi({
+        method: "post",
+        endpoint: "admin/login",
+        payload: data,
       });
 
-      if (result.ok) {
-        const response = await result.json();
-        alert("Successfully Logged In!!");
-        console.log(response); // Log the response for debugging
-      } else {
-        // Handle response error
-        console.error("Failed to log in:", result.status, result.statusText);
-      }
+      console.log("Registration Response:", registrationResponse);
+      router.push("/");
     } catch (error) {
-      // Handle fetch error
-      console.error("Fetch error:", error);
+      console.error("Registration error:", error);
     }
   };
+  //   try {
+  //     let result = await fetch("http://localhost:3003/admin/login", {
+  //       method: "POST",
+  //       body: JSON.stringify(data),
+  //       headers: {
+  //         "Content-Type": "application/json", // Set the content type
+  //       },
+  //     });
+
+  //     if (result.ok) {
+  //       const response = await result.json();
+  //       alert("Successfully Logged In!!");
+  //       console.log(response); // Log the response for debugging
+  //     } else {
+  //       // Handle response error
+  //       console.error("Failed to log in:", result.status, result.statusText);
+  //     }
+  //   } catch (error) {
+  //     // Handle fetch error
+  //     console.error("Fetch error:", error);
+  //   }
+  // };
 
   return (
     <div>

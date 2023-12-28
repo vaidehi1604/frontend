@@ -1,50 +1,43 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { useState } from "react";
-import { toast } from "react-toastify";
-import { forgot } from "@/redux/feature/auth";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
+import commonApi from "@/app/api/commonApi";
 
 const page = () => {
   const [email, setEmail] = useState("");
   const router = useRouter();
-const dispatch=useDispatch();
+
+  useEffect(() => {
+    if (email) {
+      router.push({
+        pathname: "/admin/otp",
+        query: { email: email },
+      });
+    }
+  }, [email]);
+
   const forgot = async (e) => {
     e.preventDefault();
     const data = {
       email,
     };
 
-    // await router.push(`/admin/otp?email=${encodeURIComponent(email)}`);
-    // try {
-    //   let result = await fetch("http://localhost:3003/admin/forgotpassword", {
-    //     method: "POST",
-    //     body: JSON.stringify(data),
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //   });
+    try {
+      const forgotResponse = await commonApi({
+        method: "post",
+        endpoint: "admin/forgotpassword",
+        payload: data,
+      });
 
-    //   if (result.ok) {
-    //     const response = await result.json();
-    //     router.push("/admin/reset"); // Use router.push to navigate to "/admin/reset"
-    //     toast.success("Successfully Sign In!");
-    //     console.log(response);
-    //     router.push("/admin/otp");
-    //   } else {
-    //     console.error(
-    //       "Failed to Received OTP:",
-    //       result.status,
-    //       result.statusText
-    //     );
-    //   }
-    // } catch (error) {
-    //   console.error("Fetch error:", error);
-    // }
+      console.log("Forgot Response:", forgotResponse);
+
+      // setEmail in the useEffect will trigger the navigation after the component has rendered.
+      setEmail(data.email);
+    } catch (error) {
+      console.error("Forgot error:", error);
+    }
   };
-
   return (
     <div>
       <form>

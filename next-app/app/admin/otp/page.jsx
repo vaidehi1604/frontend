@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import commonApi from "@/app/api/commonApi";
 const OneMinuteTimer = () => {
   const [seconds, setSeconds] = useState(60);
   const [displayTime, setDisplayTime] = useState("01:00");
@@ -31,34 +32,32 @@ const OneMinuteTimer = () => {
 };
 
 const page = () => {
-  const dispatch=useDispatch();
   const router = useRouter();
-  // const { email } = router.query || {};
-  console.log(router.query);
+  const { email = "" } = router.query || {};
+  console.log(email, "email");
+
   const [otp, setOtp] = useState("");
-  // const [email, setEmail] = useState("");
 
   const forgotPassword = async (e) => {
     e.preventDefault();
     const data = {
       otp,
-      // email: "vandna@gmail.com",
+      email: email,
     };
 
-    // try {
-    //   let result = await fetch("http://localhost:3003/admin/checkotp", {
-    //     method: "POST",
-    //     body: JSON.stringify(data),
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //   });
-    //   router.push("/admin/reset", { query: { otp } });
+    try {
+      const response = await commonApi({
+        method: "post",
+        endpoint: "admin/checkotp",
+        payload: data,
+      });
 
-    // }
-    // catch (error) {
-    //   console.log(error);
-    // }
+      alert("Successfully login!!");
+      console.log(response);
+      router.push("/admin/reset", { query: { otp } });
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
   };
 
   return (
@@ -69,8 +68,8 @@ const page = () => {
             <div className="bg-white px-6 py-5 rounded shadow-md text-black w-full">
               <h1 className="mb-8 text-3xl text-center">Enter Your OTP!</h1>
               <input
-                // onChange={(e) => setOtp(e.target.value)}
-                // value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                value={otp}
                 type="text"
                 className="block border border-grey-light w-full p-3 rounded mb-4"
                 name="otp"
