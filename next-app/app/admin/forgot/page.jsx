@@ -1,43 +1,38 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next-router-mock";
 import { useState } from "react";
 import commonApi from "@/app/api/commonApi";
 
 const page = () => {
-  const [email, setEmail] = useState("");
   const router = useRouter();
+  const { email = "" } = router.query || {};
+  console.log(email, "email");
 
-  useEffect(() => {
-    if (email) {
-      router.push({
-        pathname: "/admin/otp",
-        query: { email: email },
-      });
-    }
-  }, [email]);
+  const [otp, setOtp] = useState("");
 
-  const forgot = async (e) => {
+  const forgotPassword = async (e) => {
     e.preventDefault();
     const data = {
-      email,
+      otp,
+      email: email,
     };
 
     try {
-      const forgotResponse = await commonApi({
+      const response = await commonApi({
         method: "post",
-        endpoint: "admin/forgotpassword",
+        endpoint: "admin/checkotp",
         payload: data,
       });
 
-      console.log("Forgot Response:", forgotResponse);
-
-      // setEmail in the useEffect will trigger the navigation after the component has rendered.
-      setEmail(data.email);
+      alert("Successfully login!!");
+      console.log(response);
+      router.push("/admin/reset", { query: { otp } });
     } catch (error) {
-      console.error("Forgot error:", error);
+      console.error("Login failed:", error);
     }
   };
+
   return (
     <div>
       <form>
@@ -56,7 +51,7 @@ const page = () => {
               />
 
               <button
-                onClick={forgot}
+                onClick={forgotPassword}
                 type="submit"
                 className="w-full text-center py-3 rounded bg-cyan-700 text-white hover:bg-green-dark focus:outline-none my-1"
               >

@@ -14,11 +14,16 @@ const page = () => {
   const [mobileNo, setMobileNo] = useState("");
   const [address, setAddress] = useState("");
   const [image, setImage] = useState(null);
-
+  const [imageUrl, setImageUrl] = useState(null);
   const router = useRouter();
 
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+    const selectedImage = e.target.files[0];
+    setImage(selectedImage);
+
+    // Create a URL for the selected image
+    const imageUrl = selectedImage ? URL.createObjectURL(selectedImage) : null;
+    setImageUrl(imageUrl); // Set the URL to state
   };
 
   const uploadImage = async () => {
@@ -40,13 +45,19 @@ const page = () => {
       const imageData = response.data;
       const imageId = imageData && imageData._id;
 
-      return imageId; // Assuming your API returns the file path after successful upload
+      // Assuming your API returns the file path after successful upload
+      console.log("Image uploaded. Image ID:", imageId);
+
+      // Optionally, reset the state after successful upload
+      setImage(null);
+      setImageUrl(null);
+
+      return imageId;
     } catch (error) {
       console.error("Image upload error:", error);
       throw error;
     }
   };
-  // console.log(formData);
 
   const register = async () => {
     try {
@@ -148,21 +159,11 @@ const page = () => {
                 <div className="mt-4 flex text-sm leading-6 text-gray-600">
                   <label
                     htmlFor="file-upload"
-                    className=" w-full text-center relative cursor-pointer rounded-md bg-white font-semibold text-blue-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-green-500"
+                    className="w-full text-center relative cursor-pointer rounded-md bg-white font-semibold text-blue-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-green-500"
                   >
                     <span className="text-center">Upload an Image</span>
-                    {/* <input
-                      onChange={(e) => setImage(e.target.files?.[0] ?? null)}
-
-                      // onChange={{ handleFileChange }}
-                      id="file-upload"
-                      name="file-upload"
-                      type="file"
-                      className="sr-only"
-                    /> */}
-
                     <input
-                      onChange={handleImageChange}
+                      onChange={(e) => handleImageChange(e)}
                       id="file-upload"
                       name="file-upload"
                       type="file"
@@ -170,6 +171,18 @@ const page = () => {
                     />
                   </label>
                 </div>
+
+                {/* Display the uploaded image preview */}
+                {imageUrl && (
+                  <div className="m-auto mt-4 h-1/2 w-1/2">
+                    <img
+                      src={imageUrl}
+                      alt="Uploaded"
+                      className="max-w-full h-auto m-auto"
+                    />
+                  </div>
+                )}
+
                 <button
                   onClick={uploadImage}
                   type="button"
